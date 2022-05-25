@@ -1,25 +1,78 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { createContext, useEffect, useState } from 'react';
+import { Button, Form, Modal } from 'react-bootstrap';
+import Content from './Content';
+
+export const AltElementsContext = createContext()
+export const CounterContext = createContext()
+
+function AltElement(props) {
+  const [isHighlighted, setHighlight] = useState(props.isHighlight);
+  const [elementColor, setColor] = useState("");
+  const domElement = props.element
+  const text = props.value
+  const handleHighlight = () => {
+    console.log("Handle Highlight")
+    const shouldHighlight = !isHighlighted;
+    setHighlight(shouldHighlight);
+    const currColor = shouldHighlight ? "blue" : ""
+    setColor(currColor)
+    domElement.style.backgroundColor = currColor
+  }
+  return (
+    <><Form.Check type="switch" checked={isHighlighted} onClick={handleHighlight} /><div style={{backgroundColor: elementColor}}>{text}</div></>
+  )
+}
 
 function App() {
+  const [altElementList, setAltElementList] = useState([]);
+  const [isModalToggled, setModalToggled] = useState(false);
+  const [counterList, setCounterList] = useState([3,1,2,3]);
+  useEffect(() => {
+    const currList = [];
+    document.querySelectorAll('[aria-label]').forEach((element) => {
+      const altElement = <AltElement element={element} isHighlight={false} value={element.getAttribute('aria-label')}/>
+      currList.push(altElement)
+    });
+    setAltElementList(currList);
+    console.log(currList)
+    // currList.forEach(element => element.style.backgroundColor = 'blue')
+  }, [])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div aria-label='Alternate Label 1'>Element with aria-label</div>
+      <div>Element without aria-label</div>
+      <div aria-label='Alternate Label 2'>Element with aria-label</div>
+      <div>Element without aria-label</div>
+      <div aria-label='Alternate Label 3'>Element with aria-label</div>
+      <div>Element without aria-label</div>
+      <AltElementsContext.Provider value={altElementList}>
+      <CounterContext.Provider value={{counterList, setCounterList}}>
+        <Button onClick={() => setModalToggled(!isModalToggled)}>Toggle Modal</Button>
+        {isModalToggled && <MyModal />}
+      </CounterContext.Provider>
+      </AltElementsContext.Provider>
     </div>
   );
+}
+
+const MyModal = () => {
+  return (
+    <Modal.Dialog >
+      <Modal.Header closeButton>
+        <Modal.Title>Modal title</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <Content />
+        This is Modal Body
+      </Modal.Body>
+
+      <Modal.Footer>
+        <Button variant="secondary">Close</Button>
+        <Button variant="primary">Save changes</Button>
+      </Modal.Footer>
+    </Modal.Dialog>
+  )
 }
 
 export default App;
