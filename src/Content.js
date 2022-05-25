@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useState } from "react"
-import { Button, Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { AltElementsContext, CounterContext } from './App';
 
 

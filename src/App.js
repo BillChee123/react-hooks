@@ -35,7 +35,6 @@ function App() {
     });
     setAltElementList(currList);
     console.log(currList)
-    // currList.forEach(element => element.style.backgroundColor = 'blue')
   }, [])
   return (
     <div className="App">
