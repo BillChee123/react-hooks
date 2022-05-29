@@ -28,11 +28,14 @@ function App() {
   const [isModalToggled, setModalToggled] = useState(false);
   const [counterList, setCounterList] = useState([3,1,2,3]);
   useEffect(() => {
+    const altAttributes = ["aria-label", "cms-id", "alt"]
     const currList = [];
-    document.querySelectorAll('[aria-label]').forEach((element) => {
-      const altElement = <AltElement element={element} isHighlight={false} value={element.getAttribute('aria-label')}/>
-      currList.push(altElement)
-    });
+    altAttributes.forEach(attr => {
+      document.querySelectorAll(`[${attr}]`).forEach((element) => {
+        const altElement = <AltElement element={element} isHighlight={false} value={element.getAttribute(attr)}/>
+        currList.push(altElement)
+      });
+    })
     setAltElementList(currList);
     console.log(currList)
   }, [])
@@ -44,6 +47,9 @@ function App() {
       <div>Element without aria-label</div>
       <div aria-label='Alternate Label 3'>Element with aria-label</div>
       <div>Element without aria-label</div>
+      <div cms-id="12345">Highlight me</div>
+      <img src="avatar.png" alt="Avatar" width="200" height="200"></img>
+      <div></div>
       <AltElementsContext.Provider value={altElementList}>
       <CounterContext.Provider value={{counterList, setCounterList}}>
         <Button onClick={() => setModalToggled(!isModalToggled)}>Toggle Modal</Button>
