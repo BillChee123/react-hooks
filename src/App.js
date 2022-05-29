@@ -25,9 +25,9 @@ function AltElement(props) {
 
 function App() {
   const [altElementList, setAltElementList] = useState([]);
-  const [isModalToggled, setModalToggled] = useState(false);
+  const [isModalToggled, setModalToggled] = useState(true);
   const [counterList, setCounterList] = useState([3,1,2,3]);
-  useEffect(() => {
+  const updateAltElementList = () => {
     const altAttributes = ["aria-label", "cms-id", "alt"]
     const currList = [];
     altAttributes.forEach(attr => {
@@ -38,9 +38,34 @@ function App() {
     })
     setAltElementList(currList);
     console.log(currList)
+  }
+
+  useEffect(() => {
+    updateAltElementList();
+    console.log("Fired once")
+    const observer = new MutationObserver((mutations) => {
+      console.log("Observing")
+      console.log(mutations)
+      updateAltElementList();
+    })
+    observer.observe(document.body, {
+      characterDataOldValue: true,
+      subtree: true,
+      childList: true,
+      characterData: true,
+    })
   }, [])
+  const addElement = () => {
+    const altElement = document.createElement('div');
+    altElement.textContent = "New Element"
+    altElement.setAttribute('aria-label', 'Appended')
+    document.getElementById('main-body').appendChild(altElement);
+    console.log("Add element")
+    console.log(document.getElementById('main-body'))
+  }
   return (
-    <div className="App">
+    <div id="main-body" className="App">
+      <Button onClick={addElement}>Click me to add element</Button>
       <div aria-label='Alternate Label 1'>Element with aria-label</div>
       <div>Element without aria-label</div>
       <div aria-label='Alternate Label 2'>Element with aria-label</div>
